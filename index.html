@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Agendar Coleta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    #map {
+      height: 60%;
+      width: 100%;
+    }
+    #search-box {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      box-sizing: border-box;
+    }
+    #button-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .btn-agendar {
+      display: inline-block;
+      padding: 15px 30px;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <input id="search-box" type="text" placeholder="Digite um local ou endereço...">
+  <div id="map"></div>
+
+  <div id="button-container">
+    <a href="https://form.jotform.com/251494952105660" target="_blank" class="btn-agendar">
+      Agendar Coleta
+    </a>
+  </div>
+
+  <script>
+    let map;
+    let marker;
+    let autocomplete;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: -23.5505, lng: -46.6333 }, // São Paulo como padrão
+        zoom: 12,
+      });
+
+      const input = document.getElementById("search-box");
+      autocomplete = new google.maps.places.Autocomplete(input);
+      autocomplete.bindTo("bounds", map);
+
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry || !place.geometry.location) {
+          alert("Local não encontrado");
+          return;
+        }
+
+        map.panTo(place.geometry.location);
+        map.setZoom(15);
+
+        if (marker) {
+          marker.setMap(null);
+        }
+
+        marker = new google.maps.Marker({
+          position: place.geometry.location,
+          map: map,
+        });
+      });
+    }
+  </script>
+
+  <!-- Substitua SUA_API_KEY pela sua chave do Google Maps -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=SUA_API_KEY&libraries=places&callback=initMap" async defer></script>
+
+</body>
+</html>
